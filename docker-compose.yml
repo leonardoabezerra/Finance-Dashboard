@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  finance-dashboard:
+    build: .
+    container_name: finance-dashboard
+    restart: always
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./.streamlit:/app/.streamlit
+    environment:
+      - TZ=America/Sao_Paulo
