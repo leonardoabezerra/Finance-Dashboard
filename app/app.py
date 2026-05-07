@@ -47,9 +47,20 @@ st.sidebar.divider()
 
 # Time filters
 st.sidebar.subheader("Período")
-available_months = ["Todos"] + sorted(df['mes_ano'].unique().tolist(), reverse=True)
-selected_month = st.sidebar.selectbox("Mês/Ano (Atalho rápido)", available_months)
 
+# Month/Year filter
+current_month = datetime.now().strftime("%Y-%m")
+
+available_months = ["Todos"] + sorted(df['mes_ano'].unique().tolist(), reverse=True)
+
+try:
+    default_index = available_months.index(current_month)
+except ValueError:
+    default_index = 0
+
+selected_month = st.sidebar.selectbox("Mês/Ano", available_months, index=default_index)
+
+# Date range filter
 min_date = df['data'].min().date()
 max_date = df['data'].max().date()
 
@@ -142,7 +153,7 @@ col3.metric("Categoria Principal", main_category)
 
 st.divider()
 
-# Graphics
+# GRAPHICS ================================
 col_graph1, col_graph2 = st.columns(2)
 
 # Color dictionary
@@ -203,6 +214,8 @@ with col_graph2:
         st.plotly_chart(fig_day, use_container_width=True)
     else:
         st.info("Sem dados para este mês.")
+
+# GRAPHICS END =================================
 
 # Expenses History
 st.markdown('#### Histórico de Lançamentos')
