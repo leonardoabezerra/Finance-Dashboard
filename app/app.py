@@ -145,11 +145,35 @@ st.divider()
 # Graphics
 col_graph1, col_graph2 = st.columns(2)
 
+# Color dictionary
+CATEGORY_COLORS = {
+    "Alimentação": "#FF6384",           # Rosa/Vermelho suave
+    "Moradia": "#4BC0C0",               # Turquesa/Verde água
+    "Transporte": "#36A2EB",            # Azul vibrante
+    "Saúde": "#9966FF",                 # Roxo
+    "Lazer e Entretenimento": "#FFCE56", # Amarelo/Âmbar
+    "Presentes": "#FF4081",              # Rosa choque
+    "Jogos": "#673AB7",                  # Roxo profundo (Deep Purple)
+    "Educação": "#FF9F40",               # Laranja
+    "Vestuário e Cuidados Pessoais": "#E91E63", # Carmesim
+    "Compras e Utilidades": "#607D8B",   # Azul acinzentado (Slate)
+    "Serviços e Assinaturas": "#03A9F4", # Azul claro (Sky Blue)
+    "Taxas e Impostos": "#424242",       # Grafite/Cinza escuro
+    "Outros": "#8D6E63"                  # Marrom suave
+}
+
 with col_graph1:
     st.markdown("#### Gastos por Categoria")
     if not df_filtered.empty:
         category_expenses = df_filtered.groupby('Categoria', as_index=False)['valor'].sum()
-        fig_category = px.pie(category_expenses, values='valor', names='Categoria', hole=0.4)
+        fig_category = px.pie(
+            category_expenses,
+            values='valor',
+            names='Categoria',
+            hole=0.4,
+            color='Categoria',
+            color_discrete_map=CATEGORY_COLORS
+        )
         st.plotly_chart(fig_category, use_container_width=True)
     else:
         st.info("Sem dados para este mês.")
@@ -158,7 +182,13 @@ with col_graph2:
     st.markdown('#### Evolução Diária')
     if not df_filtered.empty:
         daily_expenses = df_filtered.groupby('data', as_index=False)['valor'].sum()
-        fig_day = px.line(daily_expenses, x='data', y='valor', markers=True)
+        fig_day = px.line(
+            daily_expenses,
+            x='data',
+            y='valor', 
+            markers=True,
+            color_discrete_sequence=["#1f77b4"]
+        )
         st.plotly_chart(fig_day, use_container_width=True)
     else:
         st.info("Sem dados para este mês.")
