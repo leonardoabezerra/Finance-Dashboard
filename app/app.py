@@ -66,12 +66,17 @@ st.sidebar.divider()
 # Category Filter
 st.sidebar.subheader("Categorias")
 available_categories = sorted(df['Categoria'].dropna().unique().tolist())
-selected_categories = st.sidebar.multiselect(
-    "Selecione as categorias",
-    options=available_categories,
-    default=available_categories,
-    help="Deixe vazio para ocultar todos os dados ou selecione categorias para exibir."
-)
+
+selected_categories = []
+
+for category in available_categories:
+    is_checked = st.sidebar.checkbox(category, value=True, key=f"cat_{category}")
+
+    if is_checked:
+        selected_categories.append(category)
+    
+if not selected_categories:
+    st.sidebar.warning("Selecione pelo menos uma categoria.")
 
 st.sidebar.divider()
 
