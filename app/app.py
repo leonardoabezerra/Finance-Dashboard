@@ -78,9 +78,16 @@ with col_graph2:
 
 # Expenses History
 st.markdown('#### Histórico de Lançamentos')
+
+df_display = df_filtered[['valor', 'Nome', 'Categoria', 'data']].sort_values(by='data', ascending=False).copy()
+
+df_display['valor'] = df_display['valor'].apply(lambda x: f"R$ {x:,.2f}")
+df_display['data'] = df_display['data'].dt.strftime('%d/%m/%Y')
+
 st.dataframe(
-    df_filtered[['data', 'Nome', 'Categoria', 'valor']].sort_values(by='data', ascending=False),
+    df_display,
     use_container_width=True,
+    hide_index=True,
 )
 
 
