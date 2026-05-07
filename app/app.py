@@ -198,6 +198,7 @@ with col_graph2:
             daily_expenses,
             x='data',
             y='valor', 
+            color='Categoria',
             markers=True,
             color_discrete_map=CATEGORY_COLORS,
         )
