@@ -37,7 +37,7 @@ df['mes_ano'] = df['data'].dt.to_period('M').astype(str) # Create 'mes_ano' colu
 # FILTER SIDEBAR ==========================
 st.sidebar.header("Filtros")
 
-# Text Search (Nome)
+# Text Search (Nome or Descrição)
 search_query = st.sidebar.text_input(
     "Buscar Lançamento",
     placeholder="Ex: Mercado, Uber, Conta de Luz..."
@@ -96,7 +96,10 @@ else:
 df_filtered = df.copy()
 
 if search_query:
-    df_filtered = df_filtered[df_filtered['Nome'].str.contains(search_query, case=False, na=False)]
+    mask_nome = df_filtered['Nome'].str.contains(search_query, case=False, na=False)
+    mask_desc = df_filtered['Descrição'].str.contains(search_query, case=False, na=False)
+
+    df_filtered = df_filtered[mask_nome | mask_desc]
 
 if selected_month != "Todos":
     df_filtered = df_filtered[df_filtered['mes_ano'] == selected_month]
