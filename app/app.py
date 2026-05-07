@@ -193,25 +193,22 @@ with col_graph2:
     st.markdown('#### Evolução Diária')
     if not df_filtered.empty:
         daily_expenses = df_filtered.groupby(['data', 'Categoria'], as_index=False)['valor'].sum()
+        
+        daily_expenses = daily_expenses.sort_values(by='data')
+
+        point_colors = daily_expenses['Categoria'].map(CATEGORY_COLORS).fillna('#8D6E63').tolist()
 
         fig_day = px.line(
             daily_expenses,
             x='data',
             y='valor', 
-            color='Categoria',
-            markers=True,
-            color_discrete_map=CATEGORY_COLORS,
+            markers=True
         )
 
-        # Set colors
-        for trace in fig_day.data:
-            original_color = trace.line.color
-
-            trace.marker.color = original_color
-            trace.marker.size = 8
-
-            trace.line.color = 'rgba(200, 200, 200, 0.4)'
-            trace.line.width = 1
+        fig_day.update_traces(
+            line=dict(color='rgba(200, 200, 200, 0.4)', width=1),
+            marker=dict(color=point_colors, size=8)
+        )
 
         fig_day.update_layout(showlegend=False)
 
