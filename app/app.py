@@ -181,14 +181,25 @@ with col_graph1:
 with col_graph2:
     st.markdown('#### Evolução Diária')
     if not df_filtered.empty:
-        daily_expenses = df_filtered.groupby('data', as_index=False)['valor'].sum()
+        daily_expenses = df_filtered.groupby(['data', 'Categoria'], as_index=False)['valor'].sum()
+
         fig_day = px.line(
             daily_expenses,
             x='data',
             y='valor', 
             markers=True,
-            color_discrete_sequence=["#1f77b4"]
+            color_discrete_map=CATEGORY_COLORS,
+            category_orders={"Categoria": sorted(list(CATEGORY_COLORS.keys()))}
         )
+
+        # Set line color
+        fig_day.update_traces(
+            line=dict(color='rgba(200, 200, 200, 0.4)', width=1),
+            marker=dict(size=8)
+        )
+
+        fig_day.update_layout(showlegend=False)
+
         st.plotly_chart(fig_day, use_container_width=True)
     else:
         st.info("Sem dados para este mês.")
