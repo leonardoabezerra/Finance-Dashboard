@@ -200,14 +200,17 @@ with col_graph2:
             y='valor', 
             markers=True,
             color_discrete_map=CATEGORY_COLORS,
-            category_orders={"Categoria": sorted(list(CATEGORY_COLORS.keys()))}
         )
 
-        # Set line color
-        fig_day.update_traces(
-            line=dict(color='rgba(200, 200, 200, 0.4)', width=1),
-            marker=dict(size=8)
-        )
+        # Set colors
+        for trace in fig_day.data:
+            original_color = trace.line.color
+
+            trace.marker.color = original_color
+            trace.marker.size = 8
+
+            trace.line.color = 'rgba(200, 200, 200, 0.4)'
+            trace.line.width = 1
 
         fig_day.update_layout(showlegend=False)
 
