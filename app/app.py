@@ -11,7 +11,7 @@ st.set_page_config(page_title="Finance Dashboard", layout="wide")
 st.title("My Finance Dashboard")
 
 # Autorefresh loop
-st_autorefresh(interval=10000, key="atualizacao_automatica")
+st_autorefresh(interval=1000, key="atualizacao_automatica")
 
 # Connect and read data
 conn = st.connection("gsheets", type=GSheetsConnection)
@@ -36,10 +36,39 @@ df['mes_ano'] = df['data'].dt.to_period('M').astype(str) # Create 'mes_ano' colu
 
 # Filter sidebar
 st.sidebar.header("Filtros")
-available_months = sorted(df['mes_ano'].unique().tolist(), reverse=True)
+
+# Dropdown month filter
+available_months = ["Todos"] + sorted(df['mes_ano'].unique().tolist(), reverse=True)
 selected_month = st.sidebar.selectbox("Selecione o mês/ano", available_months)
 
-df_filtered = df[df['mes_ano'] == selected_month] # Apply filter
+# Date Range Filter
+# Get min and max dates from dataset
+min_date = df['data'].min().date()
+max_date = df['data'].max().date()
+
+# Create the date range picker
+date_range = st.sidebar.date_input(
+    "Ou selecione o período",
+    value=(min_date, max_date),
+    min_value=min_date,
+    max_value=max_date,
+    format="DD/MM/YYYY"
+)
+
+# Apply filters
+df_filtered = df.copy()
+
+#Apply month filter
+if selected_month != "Todos":
+    df_filtered = df_filtered[df_filtered['mes_ano'] == selected_month]
+
+# Apply date range filter
+if isinstance(date_range, tuple) and len(date_range) == 2:
+    start_date, end_date = date_range
+    df_filtered = df_filtered[
+        (df_filtered['data'].dt.date >= start_date) &
+        (df_filtered['data'].dt.date <= end_date)
+    ]
 
 # KPIs
 st.markdown("### Resumo do Mês")
