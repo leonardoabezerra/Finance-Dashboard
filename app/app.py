@@ -11,7 +11,7 @@ st.set_page_config(page_title="Finance Dashboard", layout="wide")
 st.title("My Finance Dashboard")
 
 # Autorefresh loop
-st_autorefresh(interval=1000, key="atualizacao_automatica")
+st_autorefresh(interval=10000, key="atualizacao_automatica")
 
 # Connect and read data
 conn = st.connection("gsheets", type=GSheetsConnection)
@@ -34,41 +34,91 @@ df = df.dropna(subset=['data', 'valor']) # Drop rows with invalid 'data' or 'val
 
 df['mes_ano'] = df['data'].dt.to_period('M').astype(str) # Create 'mes_ano' column in 'YYYY-MM' format
 
-# Filter sidebar
+# FILTER SIDEBAR ==========================
 st.sidebar.header("Filtros")
 
-# Dropdown month filter
-available_months = ["Todos"] + sorted(df['mes_ano'].unique().tolist(), reverse=True)
-selected_month = st.sidebar.selectbox("Selecione o mês/ano", available_months)
+# Text Search (Nome)
+search_query = st.sidebar.text_input(
+    "Buscar Lançamento",
+    placeholder="Ex: Mercado, Uber, Conta de Luz..."
+)
 
-# Date Range Filter
-# Get min and max dates from dataset
+st.sidebar.divider()
+
+# Time filters
+st.sidebar.subheader("Período")
+available_months = ["Todos"] + sorted(df['mes_ano'].unique().tolist(), reverse=True)
+selected_month = st.sidebar.selectbox("Mês/Ano (Atalho rápido)", available_months)
+
 min_date = df['data'].min().date()
 max_date = df['data'].max().date()
 
-# Create the date range picker
 date_range = st.sidebar.date_input(
-    "Ou selecione o período",
+    "Ou selecione um período específico",
     value=(min_date, max_date),
     min_value=min_date,
     max_value=max_date,
     format="DD/MM/YYYY"
 )
 
-# Apply filters
+st.sidebar.divider()
+
+# Category Filter
+st.sidebar.subheader("Categorias")
+available_categories = sorted(df['Categoria'].dropna().unique().tolist())
+selected_categories = st.sidebar.multiselect(
+    "Selecione as categorias",
+    options=available_categories,
+    default=available_categories,
+    help="Deixe vazio para ocultar todos os dados ou selecione categorias para exibir."
+)
+
+st.sidebar.divider()
+
+# Value range slider
+st.sidebar.subheader("Faixa de Valor")
+min_val = float(df['valor'].min())
+max_val = float(df['valor'].max())
+
+# Show slider only if valid range is available
+if min_val < max_val:
+    value_range = st.sidebar.slider(
+        "Selecione a faixa de R$",
+        min_value=min_val,
+        max_value=max_val,
+        value=(min_val, max_val),
+        step=10.0
+    )
+else:
+    value_range = (min_val, max_val)
+
+# APPLY FILTERS ==================
 df_filtered = df.copy()
 
-#Apply month filter
+if search_query:
+    df_filtered = df_filtered[df_filtered['Nome'].str.contains(search_query, case=False, na=False)]
+
 if selected_month != "Todos":
     df_filtered = df_filtered[df_filtered['mes_ano'] == selected_month]
 
-# Apply date range filter
 if isinstance(date_range, tuple) and len(date_range) == 2:
     start_date, end_date = date_range
     df_filtered = df_filtered[
         (df_filtered['data'].dt.date >= start_date) &
         (df_filtered['data'].dt.date <= end_date)
     ]
+
+df_filtered = df_filtered[df_filtered['Categoria'].isin(selected_categories)]
+
+df_filtered = df_filtered[
+    (df_filtered['valor'] >= value_range[0]) &
+    (df_filtered['valor'] <= value_range[1])
+]
+
+if df_filtered.empty:
+    st.warning("Nenhum lançamento encontrado com a combinação de filtros atual.")
+
+# FILTER SIDEBAR END ==========================
 
 # KPIs
 st.markdown("### Resumo do Mês")
