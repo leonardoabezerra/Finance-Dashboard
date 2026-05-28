@@ -139,7 +139,7 @@ if df_filtered.empty:
 
 # FILTER SIDEBAR END ==========================
 
-# KPIs
+# KPIs ==================================
 st.markdown("### Resumo do Mês")
 col1, col2, col3 = st.columns(3)
 
@@ -193,29 +193,30 @@ with col_graph2:
     st.markdown('#### Evolução Diária')
     if not df_filtered.empty:
         daily_expenses = df_filtered.groupby(['data', 'Categoria'], as_index=False)['valor'].sum()
-        
         daily_expenses = daily_expenses.sort_values(by='data')
 
-        point_colors = daily_expenses['Categoria'].map(CATEGORY_COLORS).fillna('#8D6E63').tolist()
-
-        fig_day = px.line(
+        fig_day = px.bar(
             daily_expenses,
             x='data',
-            y='valor', 
-            markers=True
+            y='valor',
+            color='Categoria',
+            color_discrete_map=CATEGORY_COLORS,
+            labels={'valor': 'Valor (R$)', 'data': 'Data'}
         )
 
-        fig_day.update_traces(
-            line=dict(color='rgba(200, 200, 200, 0.4)', width=1),
-            marker=dict(color=point_colors, size=8)
+        fig_day.update_layout(
+            showlegend=True,
+            xaxis=dict(showgrid=False),
+            yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)'),
+            plot_bgcoor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            margin=dict(l=0, r=0, t=10, b=0)
         )
-
-        fig_day.update_layout(showlegend=False)
-
+        
         st.plotly_chart(fig_day, use_container_width=True)
     else:
         st.info("Sem dados para este mês.")
-
+        
 # GRAPHICS END =================================
 
 # Expenses History
