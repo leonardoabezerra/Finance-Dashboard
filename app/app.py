@@ -158,19 +158,19 @@ col_graph1, col_graph2 = st.columns(2)
 
 # Color dictionary
 CATEGORY_COLORS = {
-    "Alimentação": "#FF6384",           # Rosa/Vermelho suave
-    "Moradia": "#4BC0C0",               # Turquesa/Verde água
-    "Transporte": "#36A2EB",            # Azul vibrante
-    "Saúde": "#9966FF",                 # Roxo
-    "Lazer e Entretenimento": "#FFCE56", # Amarelo/Âmbar
-    "Presentes": "#FF4081",              # Rosa choque
-    "Jogos": "#673AB7",                  # Roxo profundo (Deep Purple)
-    "Educação": "#FF9F40",               # Laranja
-    "Vestuário e Cuidados Pessoais": "#E91E63", # Carmesim
-    "Compras e Utilidades": "#607D8B",   # Azul acinzentado (Slate)
-    "Serviços e Assinaturas": "#03A9F4", # Azul claro (Sky Blue)
-    "Taxas e Impostos": "#424242",       # Grafite/Cinza escuro
-    "Outros": "#8D6E63"                  # Marrom suave
+    "Alimentação": "#34D399",             # Emerald Green: Fresh, vital, easy to spot.
+    "Moradia": "#2DD4BF",                 # Teal: Grounded but slightly cooler than green.
+    "Transporte": "#22D3EE",              # Cyan: Fast, dynamic, highly legible.
+    "Saúde": "#38BDF8",                   # Light Blue: Clean, clinical, and calming.
+    "Lazer e Entretenimento": "#60A5FA",  # Classic Blue: Trustworthy and friendly.
+    "Presentes": "#818CF8",               # Indigo: Playful but stays within the cool spectrum.
+    "Jogos": "#A78BFA",                   # Soft Violet: Digital, modern, and deep.
+    "Educação": "#C084FC",                # Bright Purple: Creative and stimulating.
+    "Vestuário e Cuidados Pessoais": "#E879F9", # Fuchsia: A cool-toned pink to replace hot/neon pink.
+    "Compras e Utilidades": "#F472B6",    # Cool Rose: Soft, distinct, without being a "hot" red.
+    "Serviços e Assinaturas": "#94A3B8",  # Slate Blue: A cool, functional neutral.
+    "Taxas e Impostos": "#64748B",        # Dark Slate: Heavier, serious, receding visually.
+    "Outros": "#CBD5E1"                   # Light Slate: A light, unobtrusive neutral for miscellaneous data.
 }
 
 with col_graph1:
@@ -181,7 +181,7 @@ with col_graph1:
             category_expenses,
             values='valor',
             names='Categoria',
-            hole=0.4,
+            hole=0.6,
             color='Categoria',
             color_discrete_map=CATEGORY_COLORS
         )
