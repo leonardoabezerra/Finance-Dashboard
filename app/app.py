@@ -294,10 +294,11 @@ with col_graph2:
         )
 
         fig_day.update_layout(
-            showlegend=True,
+            showlegend=False,
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
-            margin=dict(l=0, r=0, t=10, b=0)
+            margin=dict(l=0, r=0, t=10, b=0),
+            bargap=0.15
         )
         
         st.plotly_chart(fig_day, use_container_width=True)
