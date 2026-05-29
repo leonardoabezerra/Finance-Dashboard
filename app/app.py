@@ -337,8 +337,19 @@ df_display['data'] = df_display['data'].dt.strftime('%d/%m/%Y')
 # Format column names
 df_display = df_display.rename(columns={'valor': 'Valor', 'data': 'Data'})
 
+# Styling category cells
+def color_category_cells(val):
+    base_color = CATEGORY_COLORS.get(val, "#0c0d0f")
+
+    # Add opacity
+    bg_color = base_color + '15'
+
+    return f'background-color: {bg_color};'
+
+styled_df = df_display.style.map(color_category_cells, subset=['Categoria'])
+
 st.dataframe(
-    df_display,
+    styled_df,
     use_container_width=True,
     hide_index=True,
     column_config={
