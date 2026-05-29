@@ -331,7 +331,7 @@ st.markdown('#### Histórico de Lançamentos')
 
 df_display = df_filtered[['valor', 'Nome', 'Categoria', 'data']].sort_values(by='data', ascending=False).copy()
 
-df_display['valor'] = df_display['valor'].apply(lambda x: f"R$ {x:,.2f}")
+# Format data
 df_display['data'] = df_display['data'].dt.strftime('%d/%m/%Y')
 
 # Format column names
@@ -341,6 +341,12 @@ st.dataframe(
     df_display,
     use_container_width=True,
     hide_index=True,
+    column_config={
+        "Valor": st.column_config.NumberColumn(
+            "Valor",
+            format="R$ %.2f"
+        )
+    }
 )
 
 #    ___           _________     _________
