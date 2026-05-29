@@ -162,17 +162,26 @@ if not df_filtered.empty:
         ((df['data']).dt.month == last_day_previous_month.month) &
         ((df['data']).dt.year == last_day_previous_month.year)
     ]
-    # last month total spent
-    previous_total_spent = df_previous_month['valor'].sum()
 
-    # last month highest expense
-    previous_highest_expense = df_previous_month['valor'].max()
+    if not df_previous_month.empty:
+    
+        # last month total spent
+        previous_total_spent = df_previous_month['valor'].sum()
 
-    # last month main category
-    previous_main_category = df_previous_month.groupby('Categoria')['valor'].sum().idxmax()
-    if main_category != 'N/A':
-        previous_main_category_spent = df_previous_month[df_previous_month['Categoria'] == main_category]['valor'].sum()
+        # last month highest expense
+        previous_highest_expense = df_previous_month['valor'].max()
+
+        # last month main category
+        previous_main_category = df_previous_month.groupby('Categoria')['valor'].sum().idxmax()
+        if main_category != 'N/A':
+            previous_main_category_spent = df_previous_month[df_previous_month['Categoria'] == main_category]['valor'].sum()
+        else:
+            previous_main_category_spent = 0
+    
     else:
+        previous_total_spent = 0
+        previous_highest_expense = 0
+        previous_main_category = 'N/A'
         previous_main_category_spent = 0
    
 else:
