@@ -5,7 +5,6 @@ from datetime import datetime
 from streamlit_gsheets import GSheetsConnection
 from streamlit_autorefresh import st_autorefresh
 # Reminder: run docker compose up -d --build
-# TODO: Create container and github repo
 
 st.set_page_config(page_title="Finance Dashboard", layout="wide")
 st.title("Dashboard de Despesas")
@@ -281,12 +280,18 @@ with col_graph1:
 with col_graph2:
     st.markdown('#### Evolução Diária')
     if not df_filtered.empty:
-        daily_expenses = df_filtered.groupby(['data', 'Categoria'], as_index=False)['valor'].sum()
-        daily_expenses = daily_expenses.sort_values(by='data')
+        df_chart = df_filtered.copy()
+
+        # Format dates on x axis
+        df_chart['data_real'] = df_chart['data'].dt.date
+        df_chart['data_label'] = df_chart['data'].dt.strftime('%d/%m')
+        
+        daily_expenses = df_chart.groupby(['data_real', 'data_label', 'Categoria'], as_index=False)['valor'].sum()
+        daily_expenses = daily_expenses.sort_values(by='data_real')
 
         fig_day = px.bar(
             daily_expenses,
-            x='data',
+            x='data_real',
             y='valor',
             color='Categoria',
             color_discrete_map=CATEGORY_COLORS,
@@ -299,6 +304,20 @@ with col_graph2:
             paper_bgcolor='rgba(0,0,0,0)',
             margin=dict(l=0, r=0, t=10, b=0),
             bargap=0.15
+        )
+
+        # Set days with no expenses
+        first_day = daily_expenses['data_real'].min()
+        last_day = daily_expenses['data_real'].max()
+        all_days = pd.date_range(first_day, last_day)   
+        
+        complete_labels = all_days.strftime('%d/%m').tolist()
+
+        # Format spacing between bars
+        fig_day.update_xaxes(
+            type='category',
+            categoryorder='array',
+            categoryarray=complete_labels
         )
         
         st.plotly_chart(fig_day, use_container_width=True)
