@@ -8,7 +8,7 @@ from streamlit_autorefresh import st_autorefresh
 # TODO: Create container and github repo
 
 st.set_page_config(page_title="Finance Dashboard", layout="wide")
-st.title("My Finance Dashboard")
+st.title("Dashboard de Despesas")
 
 # Autorefresh loop
 st_autorefresh(interval=10000, key="atualizacao_automatica")
