@@ -291,7 +291,7 @@ with col_graph2:
 
         fig_day = px.bar(
             daily_expenses,
-            x='data_real',
+            x='data_label',
             y='valor',
             color='Categoria',
             color_discrete_map=CATEGORY_COLORS,
