@@ -245,19 +245,19 @@ col_graph1, col_graph2 = st.columns(2)
 
 # Color dictionary
 CATEGORY_COLORS = {
-    "Alimentação": "#34D399",             # Emerald Green: Fresh, vital, easy to spot.
-    "Moradia": "#2DD4BF",                 # Teal: Grounded but slightly cooler than green.
-    "Transporte": "#22D3EE",              # Cyan: Fast, dynamic, highly legible.
-    "Saúde": "#38BDF8",                   # Light Blue: Clean, clinical, and calming.
-    "Lazer e Entretenimento": "#60A5FA",  # Classic Blue: Trustworthy and friendly.
-    "Presentes": "#818CF8",               # Indigo: Playful but stays within the cool spectrum.
-    "Jogos": "#A78BFA",                   # Soft Violet: Digital, modern, and deep.
-    "Educação": "#C084FC",                # Bright Purple: Creative and stimulating.
-    "Vestuário e Cuidados Pessoais": "#E879F9", # Fuchsia: A cool-toned pink to replace hot/neon pink.
-    "Compras e Utilidades": "#F472B6",    # Cool Rose: Soft, distinct, without being a "hot" red.
-    "Serviços e Assinaturas": "#94A3B8",  # Slate Blue: A cool, functional neutral.
-    "Taxas e Impostos": "#64748B",        # Dark Slate: Heavier, serious, receding visually.
-    "Outros": "#CBD5E1"                   # Light Slate: A light, unobtrusive neutral for miscellaneous data.
+    "Alimentação": "#34D399",
+    "Moradia": "#2DD4BF",
+    "Transporte": "#22D3EE",
+    "Saúde": "#38BDF8",
+    "Lazer e Entretenimento": "#60A5FA",
+    "Presentes": "#818CF8",
+    "Jogos": "#A78BFA",
+    "Educação": "#C084FC",
+    "Vestuário e Cuidados Pessoais": "#E879F9",
+    "Compras e Utilidades": "#008bad",
+    "Serviços e Assinaturas": "#94A3B8",
+    "Taxas e Impostos": "#64748B",
+    "Outros": "#CBD5E1"
 }
 
 # --- Pie Chart ---
