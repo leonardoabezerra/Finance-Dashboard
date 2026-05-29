@@ -315,7 +315,7 @@ df_display['valor'] = df_display['valor'].apply(lambda x: f"R$ {x:,.2f}")
 df_display['data'] = df_display['data'].dt.strftime('%d/%m/%Y')
 
 # Format column names
-df_display - df_display.rename(columns={'valor': 'Valor', 'data': 'Data'})
+df_display = df_display.rename(columns={'valor': 'Valor', 'data': 'Data'})
 
 st.dataframe(
     df_display,
