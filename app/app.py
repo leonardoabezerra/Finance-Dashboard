@@ -145,11 +145,89 @@ col1, col2, col3 = st.columns(3)
 
 total_spent = df_filtered['valor'].sum()
 highest_expense = df_filtered['valor'].max()
-main_category = df_filtered.groupby('Categoria')['valor'].sum().idxmax() if not df_filtered.empty else "N/A"
+category_sum = df_filtered.groupby('Categoria')['valor'].sum() if not df_filtered.empty else 0
+main_category = category_sum.idxmax() if not df_filtered.empty else "N/A"
+# current month category total spent
+main_category_total = category_sum.max() if main_category != 'N/A' else 0 
 
-col1.metric("Total Gasto", f"R$ {total_spent:,.2f}")
-col2.metric("Maior Despesa", f"R$ {highest_expense:,.2f}")
-col3.metric("Categoria Principal", main_category)
+# Calculate expenses delta comparison with last month
+# Calculate previous month total
+if not df_filtered.empty:
+    current_date = pd.to_datetime(df_filtered['data'].iloc[0])
+    first_day_current_month = current_date.replace(day=1)
+    last_day_previous_month = first_day_current_month - pd.Timedelta(days=1)
+
+    # get last months transactions
+    df_previous_month = df[
+        ((df['data']).dt.month == last_day_previous_month.month) &
+        ((df['data']).dt.year == last_day_previous_month.year)
+    ]
+    # last month total spent
+    previous_total_spent = df_previous_month['valor'].sum()
+
+    # last month highest expense
+    previous_highest_expense = df_previous_month['valor'].max()
+
+    # last month main category
+    previous_main_category = df_previous_month.groupby('Categoria')['valor'].sum().idxmax()
+    if main_category != 'N/A':
+        previous_main_category_spent = df_previous_month[df_previous_month['Categoria'] == main_category]['valor'].sum()
+    else:
+        previous_main_category_spent = 0
+   
+else:
+    previous_total_spent = 0
+    previous_highest_expense = 0
+    previous_main_category = 'N/A'
+    previous_main_category_spent = 0
+
+    
+# -- Get % diffs --
+
+# col1
+if previous_total_spent > 0:
+    percent_diff = ((total_spent - previous_total_spent) / previous_total_spent) * 100
+    operator = '+' if percent_diff > 0 else ''
+    delta_text1 = f"{operator}" + f"{percent_diff:.1f}% em relação ao mês passado"
+else:
+    delta_text1 = "Nenhum dado anterior"
+
+col1.metric(
+    label="Total Gasto",
+    value=f"R$ {total_spent:,.2f}",
+    delta=delta_text1,
+    delta_color="inverse"
+)
+
+# col2
+if previous_highest_expense > 0:
+    percent_diff = ((highest_expense - previous_highest_expense) / previous_highest_expense) * 100
+    operator = '+' if percent_diff > 0 else ''
+    delta_text2 = f"{operator}" + f"{percent_diff:.1f}%"
+else:
+    delta_text2 = "Nenhum dado anterior"
+
+col2.metric(
+   label="Maior Despesa",
+   value=f"R$ {highest_expense:,.2f}",
+   delta=delta_text2,
+   delta_color="inverse" 
+)
+
+# col3
+if previous_main_category_spent > 0:
+    percent_diff = ((main_category_total - previous_main_category_spent) / previous_main_category_spent) * 100
+    operator = '+' if percent_diff > 0 else ''
+    delta_text3 = f"{operator}" + f"{percent_diff:.1f}%"
+else:
+    delta_text2 = "Nenhum dado anterior"
+
+col3.metric(
+    label="Categoria Principal", 
+    value=main_category,
+    delta=delta_text3,
+    delta_color="inverse"
+)
 
 st.divider()
 
