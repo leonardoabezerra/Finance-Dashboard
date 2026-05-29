@@ -229,7 +229,7 @@ if previous_main_category_spent > 0:
     operator = '+' if percent_diff > 0 else ''
     delta_text3 = f"{operator}" + f"{percent_diff:.1f}%"
 else:
-    delta_text2 = "Nenhum dado anterior"
+    delta_text3 = "Nenhum dado anterior"
 
 col3.metric(
     label="Categoria Principal", 
@@ -260,6 +260,7 @@ CATEGORY_COLORS = {
     "Outros": "#CBD5E1"                   # Light Slate: A light, unobtrusive neutral for miscellaneous data.
 }
 
+# --- Pie Chart ---
 with col_graph1:
     st.markdown("#### Gastos por Categoria")
     if not df_filtered.empty:
@@ -276,6 +277,7 @@ with col_graph1:
     else:
         st.info("Sem dados para este mês.")
 
+# --- Stacked Bar Graph ---
 with col_graph2:
     st.markdown('#### Evolução Diária')
     if not df_filtered.empty:
@@ -293,9 +295,7 @@ with col_graph2:
 
         fig_day.update_layout(
             showlegend=True,
-            xaxis=dict(showgrid=False),
-            yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)'),
-            plot_bgcoor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             margin=dict(l=0, r=0, t=10, b=0)
         )
@@ -322,7 +322,6 @@ st.dataframe(
     use_container_width=True,
     hide_index=True,
 )
-
 
 #    ___           _________     _________
 #   /\  \         /\   ______\  /\   ____  \
