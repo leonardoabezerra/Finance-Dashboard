@@ -1,0 +1,13 @@
+[theme]
+
+# Set sliders, chekcboxes and butttons
+primaryColor = "#0165fb" 
+
+backgroundColor = "#08090b"
+
+# Sidebar bgcolor
+secondaryBackgroundColor = "#0c0d0f"
+
+textColor = "#FAFAFA"
+
+font = "sans serif"
