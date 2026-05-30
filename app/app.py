@@ -342,7 +342,7 @@ def color_category_cells(val):
     base_color = CATEGORY_COLORS.get(val, "#0c0d0f")
 
     # Add opacity
-    bg_color = base_color + '15'
+    bg_color = base_color + '20'
 
     return f'background-color: {bg_color};'
 
