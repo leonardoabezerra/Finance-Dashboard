@@ -216,6 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/
+.streamlit/*
 
 # venv
 venv/
