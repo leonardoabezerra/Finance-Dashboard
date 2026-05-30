@@ -138,6 +138,23 @@ if df_filtered.empty:
 
 # FILTER SIDEBAR END ==========================
 
+# FUNCTIONS ==============================
+# Configure details popup
+@st.dialog("Detalhes da Despesa")
+def show_details(row):
+    formatted_date = pd.to_datetime(row['data']).strftime('%d/%m/%Y')
+    
+    st.markdown(f"### {row['Nome']}")
+    st.markdown(f"**Valor:** R$ {row['Valor']:.2f} &nbsp;&nbsp;|&nbsp;&nbsp; **Data:** {formatted_date} &nbsp;&nbsp;|&nbsp;&nbsp; **Categoria:** {row['Categoria']}")
+    st.divider()
+
+    desc = row['Descrição']
+    if pd.isna(desc) or str(desc).strip() == "":
+        st.info("Nenhuma descrição adicional fornecida.")
+    else:
+        st.write(desc)
+
+
 # KPIs ==================================
 st.markdown("### Resumo do Mês")
 col1, col2, col3 = st.columns(3)
