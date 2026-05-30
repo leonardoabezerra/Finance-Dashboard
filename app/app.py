@@ -303,16 +303,17 @@ with col_graph2:
         df_chart['data_real'] = df_chart['data'].dt.date
         df_chart['data_label'] = df_chart['data'].dt.strftime('%d/%m')
         
-        daily_expenses = df_chart.groupby(['data_real', 'data_label', 'Categoria'], as_index=False)['valor'].sum()
-        daily_expenses = daily_expenses.sort_values(by='data_real')
+        df_chart = df_chart.sort_values(by='data_real')
 
         fig_day = px.bar(
-            daily_expenses,
+            df_chart,
             x='data_label',
             y='valor',
             color='Categoria',
+            hover_name='Nome',
             color_discrete_map=CATEGORY_COLORS,
-            labels={'valor': 'Valor (R$)', 'data': 'Data'}
+            labels={'valor': 'Valor (R$)', 'data': 'Data'},
+            hover_data={'data_label': False}
         )
 
         fig_day.update_layout(
@@ -324,8 +325,8 @@ with col_graph2:
         )
 
         # Set days with no expenses
-        first_day = daily_expenses['data_real'].min()
-        last_day = daily_expenses['data_real'].max()
+        first_day = df_chart['data_real'].min()
+        last_day = df_chart['data_real'].max()
         all_days = pd.date_range(first_day, last_day)   
         
         complete_labels = all_days.strftime('%d/%m').tolist()
@@ -334,10 +335,32 @@ with col_graph2:
         fig_day.update_xaxes(
             type='category',
             categoryorder='array',
-            categoryarray=complete_labels
+            categoryarray=complete_labels,
+            title_text="Data"
         )
+
+        # Capture chart interaction
+        chart_event = st.plotly_chart(
+            fig_day,
+            use_container_width=True,
+            on_select="rerun"
+        )
+
+        if chart_event and "points" in chart_event.selection and len(chart_event.selection["points"]) > 0:
+            point_data = chart_event.selection["points"][0]
+
+            clicked_date_label = point_data.get("x")
+            clicked_value = point_data.get("y")
+
+            # Match this specific date label and value with a row
+            matching_rows = df_chart[
+                (df_chart['data_label'] == clicked_date_label) & 
+                (df_chart['valor'] == clicked_value)
+            ]
+            
+            if not matching_rows.empty:
+                show_details(matching_rows.iloc[0])
         
-        st.plotly_chart(fig_day, use_container_width=True)
     else:
         st.info("Sem dados para este mês.")
         
@@ -346,13 +369,13 @@ with col_graph2:
 # Expenses History
 st.markdown('#### Histórico de Lançamentos')
 
-df_display = df_filtered[['valor', 'Nome', 'Categoria', 'data']].sort_values(by='data', ascending=False).copy()
+df_display = df_filtered[['valor', 'Nome', 'Categoria', 'data', 'Descrição']].sort_values(by='data', ascending=False).copy()
+df_display = df_display.reset_index(drop=True)
 
 # Format data
-df_display['data'] = df_display['data'].dt.strftime('%d/%m/%Y')
-
-# Format column names
-df_display = df_display.rename(columns={'valor': 'Valor', 'data': 'Data'})
+df_display_view = df_display.copy()
+df_display_view['data'] = df_display_view['data'].dt.strftime('%d/%m/%Y')
+df_display_view = df_display_view.rename(columns={'valor': 'Valor', 'data': 'Data'})
 
 # Styling category cells
 def color_category_cells(val):
@@ -363,19 +386,28 @@ def color_category_cells(val):
 
     return f'background-color: {bg_color};'
 
-styled_df = df_display.style.map(color_category_cells, subset=['Categoria'])
+styled_df = df_display_view.style.map(color_category_cells, subset=['Categoria'])
 
-st.dataframe(
+table_event = st.dataframe(
     styled_df,
     use_container_width=True,
     hide_index=True,
+    on_select="rerun",
+    selection_mode="single-row",
     column_config={
         "Valor": st.column_config.NumberColumn(
             "Valor",
             format="R$ %.2f"
-        )
+        ),
+        "Descrição": None # Hide column from UI by default
     }
 )
+
+# Check if user clicked a row and shows popup
+if len(table_event.selection.rows) > 0:
+    selected_index = table_event.selection.rows[0]
+    selected_row = df_display.iloc[selected_index]
+    show_details(selected_row)
 
 #    ___           _________     _________
 #   /\  \         /\   ______\  /\   ____  \
@@ -386,3 +418,5 @@ st.dataframe(
 #
 #
 #    Developed by: Leonardo Alves Bezerra.
+
+# TODO: FIX popup.
